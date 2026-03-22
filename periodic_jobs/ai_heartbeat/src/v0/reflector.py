@@ -8,7 +8,7 @@ import sys
 from opencode_client import OpenCodeClient
 from datetime import datetime
 
-KNOWLEDGE_BASE = "/path/to/your/workspace/periodic_jobs/ai_heartbeat/docs/KNOWLEDGE_BASE.md"
+KNOWLEDGE_BASE = "/Users/jack/Projects/PersonalAssistant/periodic_jobs/ai_heartbeat/docs/KNOWLEDGE_BASE.md"
 
 PROMPT_TEMPLATE = """
 执行记忆系统的"反思与晋升"任务。
@@ -32,8 +32,7 @@ SOP: {kb_path}
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='L2 Reflector Agent')
-    parser.add_argument('--model', default='<your-model-id>',
-                        choices=['<your-model-id>'],
+    parser.add_argument('--model', default='gemini-3.1-pro-preview',
                         help='Model ID to use')
     args = parser.parse_args()
     

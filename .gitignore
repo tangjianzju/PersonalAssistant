@@ -1,0 +1,18 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Knowledge cache (generated, can be large)
+.knowledge_cache/
+
+# Temp files
+tmp/

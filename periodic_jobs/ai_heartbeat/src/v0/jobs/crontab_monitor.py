@@ -35,7 +35,7 @@ def run_ai_analysis():
 2. **深度调查日志**：
    - 对于每个任务，分析其执行频率。
    - 识别日志文件路径。
-   - **向下钻取 (Drill-down)**：如果 Crontab 中没有明确的日志重定向（例如没有 `>>`），请**不要直接假设它没有日志**。你应该定位脚本文件（例如 `/path/to/your/workspace/scripts/cron_launcher.sh`）并 `read` 脚本内容，检查其内部是否有日志重定向逻辑（例如 `exec >>`）。
+   - **向下钻取 (Drill-down)**：如果 Crontab 中没有明确的日志重定向（例如没有 `>>`），请**不要直接假设它没有日志**。你应该定位脚本文件（例如 `/Users/jack/Projects/PersonalAssistant/scripts/cron_launcher.sh`）并 `read` 脚本内容，检查其内部是否有日志重定向逻辑（例如 `exec >>`）。
 3. **活跃度分析**：
    - 使用工具检查日志文件的最后修改时间。
    - 如果频率很高（如每 2 分钟运行一次），日志应在最近 2 分钟内更新。
@@ -46,8 +46,8 @@ def run_ai_analysis():
 
 5. **录音质量检查**：
    - 运行 life_record 的录音检查脚本，检查**最近两天**的录音是否有问题。
-    - 脚本路径：`/path/to/your/workspace/contexts/life_record/scripts/check_recent_recordings.py`
-   - 执行方式：先 `cd /path/to/your/workspace/contexts/life_record`，对最近两天的 YYYYMMDD 各运行一次。可通过 `ls data/` 获取最近两个日期目录，或使用 `date -v-1d +%Y%m%d` 获取昨天日期。示例：`python scripts/check_recent_recordings.py`（最近一天）及 `python scripts/check_recent_recordings.py 20260224`（指定日期）。
+    - 脚本路径：`/Users/jack/Projects/PersonalAssistant/contexts/life_record/scripts/check_recent_recordings.py`
+   - 执行方式：先 `cd /Users/jack/Projects/PersonalAssistant/contexts/life_record`，对最近两天的 YYYYMMDD 各运行一次。可通过 `ls data/` 获取最近两个日期目录，或使用 `date -v-1d +%Y%m%d` 获取昨天日期。示例：`python scripts/check_recent_recordings.py`（最近一天）及 `python scripts/check_recent_recordings.py 20260224`（指定日期）。
    - 关注的问题：覆盖率不足（如 24 小时只录了 2 小时）、音量完全静音（无有效声音）、目录为空等。
    - 若脚本 exit 1 或输出问题描述，视为异常。
 

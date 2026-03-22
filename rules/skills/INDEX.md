@@ -15,7 +15,6 @@
 - ✅ 三层记忆系统 — 需配置 OpenCode + cron
 
 ### Tier 2: 扩展（需要额外配置）
-- ⚙️ Semantic Search — 需要 LLM Studio 或 OpenAI API
 - ⚙️ Share Report — 需要 SSH 服务器或 GitHub Pages
 - ⚙️ Google Docs — 需要 Google OAuth
 - ⚙️ Send Email — 需要 Gmail App Password

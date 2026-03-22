@@ -43,6 +43,11 @@
 
 ## 2. 使用说明
 
+### 2.0 支持远端方案和本地模型（默认）
+
+- **推荐方案（本地隐私）**：运行 [Ollama](https://ollama.com/) 并下载模型 `ollama pull qwen3-embedding`。
+- **云端方案**：在 `.env` 中配置 `OPENAI_API_KEY`，运行时指定 `--endpoint https://api.openai.com/v1 --model text-embedding-3-small`。
+
 ### 2.1 核心命令
 ```bash
 python tools/semantic_search/main.py \
@@ -69,10 +74,17 @@ python tools/semantic_search/main.py \
     find contexts/blog/content contexts/survey_sessions -name "*.md" > tmp/search_files.txt
     ```
 2.  **执行语义搜索**：
+    2.1  **默认连接本地 Ollama**:
+    ```bash
+    # 确保 Ollama 已启动且模型已下载
+    python tools/semantic_search/main.py --file-list tmp/search_files.txt --query "你想问的内容" --top-k 10 --cache-dir .knowledge_cache
+    ```
+
+    2.2  **使用OPENAI API**:
     ```bash
     source .venv/bin/activate
     export OPENAI_API_KEY=$(grep OPENAI_API_KEY .env | cut -d '=' -f2)
-    python tools/semantic_search/main.py --file-list tmp/search_files.txt --query "..." --top-k 10 --cache-dir .knowledge_cache
+    python tools/semantic_search/main.py --file-list tmp/search_files.txt --query "你想问的内容" --top-k 10 --cache-dir .knowledge_cache
     ```
 3.  **分析与综合**：阅读搜索结果（通常包含 score, source_file, text），结合元数据（日期、分类）进行综合分析。
 4.  **清理**：任务完成后删除 `tmp/search_files.txt`。

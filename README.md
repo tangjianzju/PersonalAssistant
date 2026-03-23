@@ -1,31 +1,10 @@
-# Context Infrastructure — Reference Implementation
-
-> 背景阅读：[为什么AI只会说正确的废话，以及怎么把它逼出舒适区](https://yage.ai/context-infrastructure.html)
-
-这是一个运行了一年的 context infrastructure 系统的完整结构。主要价值是作为 reference implementation，让你看到系统长什么样、数据如何流动、记忆如何积累。
-
-**核心定位**：这不是开箱即用的工具，而是一个可以参考的蓝图。Clone 下来后，你可以立刻体验「有 context vs 没有 context」的差异。但要让 AI 真正变成你自己的，需要从头采集你的行为数据——没有捷径。
-
----
-
-## Quick Start（5 分钟）
-
-```bash
-git clone https://github.com/grapeot/context-infrastructure
-cd context-infrastructure
-# 用 Claude Code / OpenCode / Cursor 打开这个目录
-```
-
-然后：打开 [`rules/USER.md`](rules/USER.md)，填写你的基本信息。这是 ROI 最高的一步，完成后 AI 的行为立刻个性化。
-
-详细步骤见 [`setup_guide.md`](setup_guide.md)。
-
----
+# Jian's Personal Assistant
+Jian打造的个人助手，基于鸭哥的https://github.com/grapeot/context-infrastructure
 
 ## 目录结构
 
 ```
-context-infrastructure/
+PersonalAssistant/
 ├── AGENTS.md                    # 根路由表（AI 每次 session 的起点）
 ├── setup_guide.md               # 配置指引
 ├── .env.example                 # 环境变量模板

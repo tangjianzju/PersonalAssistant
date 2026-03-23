@@ -28,6 +28,5 @@
 - 需要隔离时在 `adhoc_jobs/<project>/.venv/` 建独立环境
 
 ## 快速查询
+- iOS客户端来访问opencode server状态：adhoc_jobs/opencode_ios_client-master
 
-<!-- 随着你的项目增长，在这里添加活跃项目的快捷路由 -->
-<!-- 格式：- `project-name` → `adhoc_jobs/project_name/` (说明) -->

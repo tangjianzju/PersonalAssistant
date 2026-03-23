@@ -19,7 +19,7 @@ MESSAGE_TIMEOUT = int(os.getenv("OPENCODE_MESSAGE_TIMEOUT", "3600"))
 
 class OpenCodeClient:
     def __init__(self):
-        self.base_url = os.getenv("OPENCODE_BASE_URL", "http://localhost:4096")
+        self.base_url = os.getenv("OPENCODE_BASE_URL", "http://0.0.0.0:4096")
         self.username = os.getenv("OPENCODE_USERNAME", "opencode")
         self.password = os.getenv("OPENCODE_PASSWORD")
         

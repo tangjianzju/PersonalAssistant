@@ -32,7 +32,7 @@ SOP: {kb_path}
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='L2 Reflector Agent')
-    parser.add_argument('--model', default='gemini-3.1-pro-preview',
+    parser.add_argument('--model', default='antigravity-gemini-3-flash',
                         help='Model ID to use')
     args = parser.parse_args()
     

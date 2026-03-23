@@ -41,7 +41,7 @@ def main():
     parser = argparse.ArgumentParser(description='L1 Observer Agent')
     parser.add_argument('date', nargs='?', default=datetime.now().strftime("%Y-%m-%d"),
                         help='Target date (YYYY-MM-DD)')
-    parser.add_argument('--model', default='antigravity-gemini-3-flash',
+    parser.add_argument('--model', default='kimi-k2.5',
                         help='Model ID to use')
     parser.add_argument('--no-delete', action='store_true',
                         help='Keep session after completion (default: delete)')

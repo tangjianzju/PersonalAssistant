@@ -94,19 +94,27 @@ class OpenCodeClient:
             time.sleep(poll_interval)
         return False
 
-    def send_message(self, session_id, message, model_id="antigravity-gemini-3-flash", provider_id=None, agent="OpenCode-Builder"):
+    def send_message(self, session_id, message, model_id="antigravity-gemini-3-flash", provider_id=None, agent="Sisyphus (Ultraworker)"):
         try:
             # Auto-detect provider from model_id if not specified
             if provider_id is None:
                 provider_id = "google"
-                if model_id == "glm-5":
+                if model_id in ("glm-5", "glm-4.5", "glm-4.7"):
                     provider_id = "zai-coding-plan"
-                elif model_id.startswith("anthropic") or "/" in model_id:
+                elif model_id.startswith(("anthropic", "claude")):
                     # Handle format like "anthropic/claude-sonnet-4-6"
                     if "/" in model_id:
                         provider_id, model_id = model_id.split("/", 1)
                     else:
                         provider_id = "anthropic"
+                elif "-free" in model_id or model_id in ("big-pickle", "gpt-5-nano"):
+                    # OpenCode provider free models
+                    provider_id = "opencode"
+                elif model_id.startswith("kimi"):
+                    provider_id = "moonshotai-cn"
+                elif "/" in model_id:
+                    # Handle format like "anthropic/claude-sonnet-4-6" or "opencode/nemotron-3-super-free"
+                    provider_id, model_id = model_id.split("/", 1)
 
             payload = {
                 "parts": [{"type": "text", "text": message}],

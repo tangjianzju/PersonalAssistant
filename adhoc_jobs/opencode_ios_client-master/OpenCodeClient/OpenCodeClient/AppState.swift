@@ -166,6 +166,7 @@ final class AppState {
     private static let aiBuilderLastOKTestedAtKey = "aiBuilderLastOKTestedAt"
     private static let draftInputsBySessionKey = "draftInputsBySession"
     private static let selectedModelBySessionKey = "selectedModelBySession"
+    private static let recentModelIDsKey = "recentModelIDs"
     private static let showArchivedSessionsKey = "showArchivedSessions"
     private static let selectedProjectWorktreeKey = "selectedProjectWorktree"
     private static let customProjectPathKey = "customProjectPath"
@@ -217,6 +218,11 @@ final class AppState {
         if let data = UserDefaults.standard.data(forKey: Self.selectedModelBySessionKey),
            let decoded = try? JSONDecoder().decode([String: String].self, from: data) {
             selectedModelIDBySessionID = decoded
+        }
+        
+        if let data = UserDefaults.standard.data(forKey: Self.recentModelIDsKey),
+           let decoded = try? JSONDecoder().decode([String].self, from: data) {
+            recentModelIDs = decoded
         }
     }
 
@@ -420,8 +426,22 @@ final class AppState {
         ModelPreset(displayName: "Sonnet 4.6", providerID: "anthropic", modelID: "claude-sonnet-4-6"),
         ModelPreset(displayName: "GPT-5.4", providerID: "openai", modelID: "gpt-5.4"),
         ModelPreset(displayName: "GPT-5.3 Codex", providerID: "openai", modelID: "gpt-5.3-codex"),
+        ModelPreset(displayName: "Moonshot AI (China) - Kimi K2.5", providerID: "moonshotai-cn", modelID: "kimi-k2.5"),
     ]
     var selectedModelIndex: Int = 3
+    
+    private var recentModelIDs: [String] = []
+    private static let maxRecentModels = 6
+    
+    var recentModelPresets: [ModelPreset] {
+        let presets = recentModelIDs.compactMap { id in
+            modelPresets.first { $0.id == id }
+        }
+        if presets.isEmpty {
+            return Array(modelPresets.prefix(Self.maxRecentModels))
+        }
+        return presets
+    }
     
     var agents: [AgentInfo] = [
         AgentInfo(name: "OpenCode-Builder", description: "Build agent (OpenCode default)", mode: "all", hidden: false, native: false),
@@ -660,9 +680,22 @@ final class AppState {
     func setSelectedModelIndex(_ index: Int) {
         guard modelPresets.indices.contains(index) else { return }
         selectedModelIndex = index
+        let modelID = modelPresets[index].id
+        updateRecentModels(modelID: modelID)
         guard let sessionID = currentSessionID else { return }
-        selectedModelIDBySessionID[sessionID] = modelPresets[index].id
+        selectedModelIDBySessionID[sessionID] = modelID
         persistSelectedModelMap()
+    }
+    
+    private func updateRecentModels(modelID: String) {
+        recentModelIDs.removeAll { $0 == modelID }
+        recentModelIDs.insert(modelID, at: 0)
+        if recentModelIDs.count > Self.maxRecentModels {
+            recentModelIDs = Array(recentModelIDs.prefix(Self.maxRecentModels))
+        }
+        if let data = try? JSONEncoder().encode(recentModelIDs) {
+            UserDefaults.standard.set(data, forKey: Self.recentModelIDsKey)
+        }
     }
     
     func setSelectedAgentIndex(_ index: Int) {
@@ -799,8 +832,11 @@ final class AppState {
         isLoadingAgents = true
         do {
             let loaded = try await apiClient.agents()
+            let oldSelection = selectedAgent
             agents = loaded
-            if selectedAgentIndex >= visibleAgents.count && !visibleAgents.isEmpty {
+            if let oldSelection, let newIndex = visibleAgents.firstIndex(where: { $0.id == oldSelection.id }) {
+                selectedAgentIndex = newIndex
+            } else if selectedAgentIndex >= visibleAgents.count && !visibleAgents.isEmpty {
                 selectedAgentIndex = 0
             }
         } catch {
@@ -1771,13 +1807,31 @@ final class AppState {
             providersResponse = resp
             providerConfigError = nil
             var idx: [String: ProviderModel] = [:]
+            var newPresets: [ModelPreset] = []
             for p in resp.providers {
                 for (modelID, m) in p.models {
                     let key = "\(p.id)/\(modelID)"
                     idx[key] = m
+                    let providerName = p.name ?? p.id
+                    let modelName = m.name ?? modelID
+                    let displayName = "\(providerName) - \(modelName)"
+                    newPresets.append(ModelPreset(displayName: displayName, providerID: p.id, modelID: modelID))
                 }
             }
             providerModelsIndex = idx
+            if !newPresets.isEmpty {
+                let oldSelection = selectedModel
+                modelPresets = newPresets
+                if let oldSelection, let newIndex = modelPresets.firstIndex(where: { $0.id == oldSelection.id }) {
+                    selectedModelIndex = newIndex
+                } else {
+                    selectedModelIndex = 0
+                }
+                if let sessionID = currentSessionID, let m = selectedModel {
+                    selectedModelIDBySessionID[sessionID] = m.id
+                    persistSelectedModelMap()
+                }
+            }
         } catch {
             providerConfigError = error.localizedDescription
         }

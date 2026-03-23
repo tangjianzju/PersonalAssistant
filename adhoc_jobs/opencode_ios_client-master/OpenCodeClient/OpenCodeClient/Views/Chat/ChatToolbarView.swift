@@ -106,17 +106,20 @@ struct ChatToolbarView: View {
     // MARK: - Model Selection Menu
     private var modelMenu: some View {
         Menu {
-            ForEach(Array(state.modelPresets.enumerated()), id: \.element.id) { index, preset in
-                Button {
-                    state.setSelectedModelIndex(index)
-                } label: {
-                    HStack {
-                        Text(preset.displayName)
-                        if state.selectedModelIndex == index {
-                            Image(systemName: "checkmark")
+            if !state.recentModelPresets.isEmpty {
+                Section("Recent") {
+                    ForEach(state.recentModelPresets) { preset in
+                        if let index = state.modelPresets.firstIndex(where: { $0.id == preset.id }) {
+                            modelButton(for: preset, at: index)
                         }
                     }
                 }
+                
+                Section("All Models") {
+                    allModelsList
+                }
+            } else {
+                allModelsList
             }
         } label: {
             HStack(spacing: 4) {
@@ -132,6 +135,25 @@ struct ChatToolbarView: View {
             .clipShape(Capsule())
         }
         .menuStyle(.borderlessButton)
+    }
+    
+    private var allModelsList: some View {
+        ForEach(Array(state.modelPresets.enumerated()), id: \.element.id) { index, preset in
+            modelButton(for: preset, at: index)
+        }
+    }
+    
+    private func modelButton(for preset: ModelPreset, at index: Int) -> some View {
+        Button {
+            state.setSelectedModelIndex(index)
+        } label: {
+            HStack {
+                Text(preset.displayName)
+                if state.selectedModelIndex == index {
+                    Image(systemName: "checkmark")
+                }
+            }
+        }
     }
     
     // MARK: - Agent Selection Menu
